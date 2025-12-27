@@ -1,4 +1,4 @@
-# Impossible Architecture AI Agent 🏗️✨
+# Automate Image Generation AI Agent 🏗️✨
 
 ![n8n](https://img.shields.io/badge/Built_with-n8n-FF6584?style=flat-square&logo=n8n)
 ![Groq](https://img.shields.io/badge/AI_Brain-Groq_Llama_3-f55036?style=flat-square)
@@ -8,12 +8,6 @@ An autonomous AI Agent built in **n8n** that generates viral "Impossible Archite
 
 ## 📸 Workflow Overview
 
-<!-- 
-INSTRUCTIONS: 
-1. Take a screenshot of your full n8n canvas.
-2. Upload it to your repo (e.g., name it 'workflow-screenshot.png').
-3. The line below will automatically display it.
--->
 ![Workflow Screenshot](./automate-image-generator.jpg)
 
 ## 🚀 Features
