@@ -1,4 +1,4 @@
-# Automate Image Generation AI Agent 🏗️✨
+# Automate Image Generating AI Agent 🏗️✨
 
 ![n8n](https://img.shields.io/badge/Built_with-n8n-FF6584?style=flat-square&logo=n8n)
 ![Groq](https://img.shields.io/badge/AI_Brain-Groq_Llama_3-f55036?style=flat-square)
