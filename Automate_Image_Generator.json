@@ -1,0 +1,227 @@
+{
+  "name": "Automate_Image_Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -320,
+        -128
+      ],
+      "id": "b9ac1b41-470c-44fb-9480-a94e947fe3b1",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Generate a viral concept for a futuristic home. \n\nStep 1: Pick ONE setting from this list (Do not always pick Sky):\n- OCEAN: A glass villa half-submerged in a turquoise ocean.\n- CLIFF: A concrete geometric home hanging dangerously off a sheer rock face.\n- FOREST: A bioluminescent eco-pod integrated into giant ancient tree roots.\n- DESERT: A mirrored invisible house reflecting the sand dunes.\n- SNOW: A glowing thermal glass structure embedded in a glacier.\n- URBAN: A vertical forest skyscraper in a dense neon city.\n\nStep 2: Describe it for an image generator (High detail, textures, lighting).\n\nStep 3: Write a short viral question and 5 tags.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a viral luxury architecture curator. You do not speak English. You output ONLY valid JSON.\n\nYour goal is to generate \"Futuristic Dream Home\" concepts.\n1. DIVERSITY RULE: Do NOT place every building in the sky. You must rotate between Oceans, Forests, Deserts, Cliffs, and Snowy Mountains.\n2. VISUAL STYLE: Photorealistic, 8k, Parametric Architecture (Zaha Hadid style), Biophilic design, Luxury aesthetics, Cinematic lighting.\n3. CAPTION RULE: A short engaging question (max 10 words) + 5 hashtags."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -16,
+        -96
+      ],
+      "id": "5b7fe71a-34a1-454e-9e99-d9b4455e8c7b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"image_prompt\": \"High detail, 8k, photorealistic, cinematic lighting, wide angle photo of [DETAILED SCENE DESCRIPTION OF THE IMPOSSIBLE ARCHITECTURE]\",\n  \"caption\": \"A short, viral, engaging question (under 10 words) FOLLOWED BY exactly 5 relevant hashtags. Example: Would you sleep in this glass cloud? #Architecture #Design #Surreal #Future #DreamHome\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        112
+      ],
+      "id": "087fc08b-8572-4c41-a746-dbba818aa632",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-base-1.0",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer hf_YourNewToken..."
+            },
+            {
+              "name": "Accept",
+              "value": "*/*"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"inputs\": \"{{ $json.output.image_prompt }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        384,
+        -96
+      ],
+      "id": "e875d3f3-d65d-46d5-8235-e2a3f0bca14b",
+      "name": "HTTP Request1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "your_telegram_chatid",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $json.output.caption }}"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        -96
+      ],
+      "id": "0fa4841b-9945-4c21-9781-fc983e10ade4",
+      "name": "Send a photo message",
+      "webhookId": "ea63c4c2-7cbb-4886-a665-50bb24132c75",
+      "credentials": {
+        "telegramApi": {
+          "id": "a8r3RaxcdyALZKOD",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "trigger-bot",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        128
+      ],
+      "id": "7aa4e874-9339-4d29-a81a-c12108cfd237",
+      "name": "Webhook",
+      "webhookId": "1724f4dc-7ae1-4f9c-bfc9-2d2c8e5a47cb"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        128
+      ],
+      "id": "b6989059-32d0-4e32-9e31-f38a132b9110",
+      "name": "Groq Chat Model"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b39ce501-367e-4860-8422-e702ce00b0cd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cbab2fbabdbe7889de588df04dec60f07a128610d5d20ebc8c79af944f678731"
+  },
+  "id": "LV2SNJ0U8inoBib9",
+  "tags": []
+}
