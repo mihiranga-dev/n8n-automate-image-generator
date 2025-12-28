@@ -14,7 +14,7 @@ An autonomous AI Agent built in **n8n** that generates viral "Impossible Archite
 
 *   **🧠 Intelligent Brain (Groq):** Uses `Llama-3.3-70b` to generate creative, non-repetitive architecture concepts (e.g., "A glass house inside a thundercloud" or "A bioluminescent jungle pod").
 *   **🎨 High-End Vision (Hugging Face):** Uses **Stable Diffusion XL (SDXL 1.0)** to render 8k, photorealistic architectural visualizations for free.
-*   **🔄 Anti-Repetition Logic:** Includes a custom Javascript Randomizer to ensure the bot rotates between environments (Ocean, Desert, Snow, Space, Urban) and never gets stuck on one theme.
+*   **🔄 Anti-Repetition Logic:** Includes a Randomizer to ensure the bot rotates between environments (Ocean, Desert, Snow, Space, Urban) and never gets stuck on one theme.
 *   **🤖 Structured Output:** Forces the AI to return strict JSON with a viral-style question and exactly 5 relevant hashtags.
 *   **⏱️ Hybrid Trigger:** Runs automatically on a schedule (e.g., every 6 hours) OR manually via a Telegram command (`again`).
 
